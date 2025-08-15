@@ -55,17 +55,32 @@
 
     <hr class="text-white">
 
-    <div class="container text-white">
-        <h2 class="mb-4">Фильтры</h2>
-        <div class="card bg-dark border-secondary mb-4">
-            <div class="card-body">
-                <form method="GET" action="/">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-3">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card bg-dark text-white border-secondary mb-4">
+                <div class="card-header">
+                    Фильтр по категориям
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('home') }}" class="list-group-item list-group-item-action bg-dark text-white {% if not selected_category %}active{% endif %}">Все категории</a>
+                    <a href="{{ url_for('home', category='Футбольная форма') }}" class="list-group-item list-group-item-action bg-dark text-white {% if selected_category == 'Футбольная форма' %}active{% endif %}">Футбольная форма</a>
+                    <a href="{{ url_for('home', category='Бутсы') }}" class="list-group-item list-group-item-action bg-dark text-white {% if selected_category == 'Бутсы' %}active{% endif %}">Бутсы</a>
+                    <a href="{{ url_for('home', category='Мячи') }}" class="list-group-item list-group-item-action bg-dark text-white {% if selected_category == 'Мячи' %}active{% endif %}">Мячи</a>
+                    <a href="{{ url_for('home', category='Аксессуары') }}" class="list-group-item list-group-item-action bg-dark text-white {% if selected_category == 'Аксессуары' %}active{% endif %}">Аксессуары</a>
+                </div>
+            </div>
+
+            <div class="card bg-dark text-white border-secondary mb-4">
+                <div class="card-header">
+                    Прочие фильтры
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="/">
+                        <div class="mb-3">
                             <label for="search" class="form-label">Поиск по названию</label>
                             <input type="text" class="form-control bg-secondary text-white border-secondary" id="search" name="search" value="{{ search_query if search_query is not none else '' }}">
                         </div>
-                        <div class="col-md-2">
+                        <div class="mb-3">
                             <label for="brand" class="form-label">Бренд</label>
                             <select class="form-select bg-secondary text-white border-secondary" id="brand" name="brand">
                                 <option value="">Все бренды</option>
@@ -74,7 +89,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="mb-3">
                             <label for="sort_by" class="form-label">Сортировать по</label>
                             <select class="form-select bg-secondary text-white border-secondary" id="sort_by" name="sort_by">
                                 <option value="">По умолчанию</option>
@@ -84,7 +99,7 @@
                                 <option value="name_desc" {% if sort_by == 'name_desc' %}selected{% endif %}>Название: Я-А</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="mb-3">
                             <label for="form_type" class="form-label">Тип формы</label>
                             <select class="form-select bg-secondary text-white border-secondary" id="form_type" name="form_type">
                                 <option value="">Все типы</option>
@@ -93,56 +108,56 @@
                                 <option value="Гостевая" {% if form_type == 'Гостевая' %}selected{% endif %}>Гостевая</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">Применить</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <h2 class="mb-4 text-white" id="products">Каталог</h2>
-        <div class="row justify-content-center">
-            {% for product in products.items %}
-            <div class="col-md-4 mb-4">
-                <div class="card bg-dark text-white border-secondary">
-                    <img src="/static/images/{{ product.image_file }}" class="card-img-top" alt="{{ product.name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ product.name }}</h5>
-                        <p class="card-text">{{ product.description }}</p>
-                        <p class="card-text"><strong>Цена: ${{ "%.2f" | format(product.price) }}</strong></p>
-                        <a href="/product/{{ product.id }}" class="btn btn-primary">Подробнее</a>
-                        <a href="/add_to_cart/{{ product.id }}" class="btn btn-success">В корзину</a>
-                    </div>
+                        <button type="submit" class="btn btn-primary w-100">Применить</button>
+                    </form>
                 </div>
             </div>
-            {% endfor %}
         </div>
 
-        <div class="d-flex justify-content-center mt-4">
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <li class="page-item {% if not products.has_prev %}disabled{% endif %}">
-                        <a class="page-link" href="{{ url_for('home', page=products.prev_num) }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    {% for page_num in products.iter_pages() %}
-                        {% if page_num %}
-                            <li class="page-item {% if products.page == page_num %}active{% endif %}">
-                                <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
-                            </li>
-                        {% else %}
-                            <li class="page-item disabled"><span class="page-link">...</span></li>
-                        {% endif %}
-                    {% endfor %}
-                    <li class="page-item {% if not products.has_next %}disabled{% endif %}">
-                        <a class="page-link" href="{{ url_for('home', page=products.next_num) }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+        <div class="col-md-9">
+            <h2 class="mb-4 text-white" id="products">Каталог</h2>
+            <div class="row justify-content-center">
+                {% for product in products.items %}
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-dark text-white border-secondary">
+                        <img src="/static/images/{{ product.image_file }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description }}</p>
+                            <p class="card-text"><strong>Цена: ${{ "%.2f" | format(product.price) }}</strong></p>
+                            <a href="/product/{{ product.id }}" class="btn btn-primary">Подробнее</a>
+                            <a href="/add_to_cart/{{ product.id }}" class="btn btn-success">В корзину</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="d-flex justify-content-center mt-4">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item {% if not products.has_prev %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('home', page=products.prev_num) }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% for page_num in products.iter_pages() %}
+                            {% if page_num %}
+                                <li class="page-item {% if products.page == page_num %}active{% endif %}">
+                                    <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="page-item {% if not products.has_next %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('home', page=products.next_num) }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 {% endblock %}
