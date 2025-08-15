@@ -3,10 +3,16 @@
 {% block title %}Каталог футбольных форм{% endblock %}
 
 {% block content %}
-    <h1 class="mb-4 text-white">Каталог футбольных форм</h1>
+    <div class="p-5 mb-4 bg-dark rounded-3 text-white">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold">Магазин футбольных форм</h1>
+            <p class="col-md-8 fs-4">Найдите форму вашей любимой команды. Самые новые комплекты сезона 2024/25 уже в продаже!</p>
+            <a href="#products" class="btn btn-primary btn-lg">Перейти к каталогу</a>
+        </div>
+    </div>
 
     <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-3">
             {# Filters Column #}
             <div class="card bg-dark text-white border-secondary mb-4">
                 <div class="card-header">
@@ -52,8 +58,9 @@
             </div>
         </div>
 
-        <div class="col-md-10">
+        <div class="col-md-9">
             {# Products Column #}
+            <h2 class="mb-4 text-white" id="products">Каталог</h2>
             <div class="row justify-content-center">
                 {% for product in products %}
                 <div class="col-md-4 mb-4">
@@ -73,20 +80,25 @@
 
             <hr class="text-white">
 
-            <div class="row mt-4 text-white">
-                <div class="col-md-6">
-                    <div class="card bg-dark border-secondary p-4">
-                        <h3>Новые поступления</h3>
-                        <p>Следите за обновлениями! Скоро здесь появятся новые формы ваших любимых команд.</p>
+            <h2 class="mb-4 mt-4 text-white">Рекомендуемые товары</h2>
+            <div class="row">
+                {# In a real application, you would have a separate query for featured products #}
+                {% for product in products.slice(0, 3) %}
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-dark text-white border-secondary">
+                        <img src="/static/images/{{ product.image_file }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description }}</p>
+                            <p class="card-text"><strong>Цена: ${{ "%.2f" | format(product.price) }}</strong></p>
+                            <a href="/product/{{ product.id }}" class="btn btn-primary">Подробнее</a>
+                            <a href="/add_to_cart/{{ product.id }}" class="btn btn-success">В корзину</a>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card bg-dark border-secondary p-4">
-                        <h3>Специальные предложения</h3>
-                        <p>Не пропустите наши акции и скидки на популярные товары. Подпишитесь на нашу рассылку!</p>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
 
         </div>
+    </div>
 {% endblock %}
