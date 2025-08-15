@@ -6,7 +6,7 @@
     <h1 class="mb-4 text-white">Каталог футбольных форм</h1>
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
             {# Filters Column #}
             <div class="card bg-dark text-white border-secondary mb-4">
                 <div class="card-header">
@@ -28,27 +28,37 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="min_price" class="form-label">Мин. цена</label>
-                            <input type="number" class="form-control bg-secondary text-white border-secondary" id="min_price" name="min_price" value="{{ min_price if min_price is not none else '' }}" step="0.01">
+                            <label for="sort_by" class="form-label">Сортировать по</label>
+                            <select class="form-select bg-secondary text-white border-secondary" id="sort_by" name="sort_by">
+                                <option value="">По умолчанию</option>
+                                <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Цена: по возрастанию</option>
+                                <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Цена: по убыванию</option>
+                                <option value="name_asc" {% if sort_by == 'name_asc' %}selected{% endif %}>Название: А-Я</option>
+                                <option value="name_desc" {% if sort_by == 'name_desc' %}selected{% endif %}>Название: Я-А</option>
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label for="max_price" class="form-label">Макс. цена</label>
-                            <input type="number" class="form-control bg-secondary text-white border-secondary" id="max_price" name="max_price" value="{{ max_price if max_price is not none else '' }}" step="0.01">
+                            <label for="form_type" class="form-label">Тип формы</label>
+                            <select class="form-select bg-secondary text-white border-secondary" id="form_type" name="form_type">
+                                <option value="">Все типы</option>
+                                <option value="Домашняя" {% if form_type == 'Домашняя' %}selected{% endif %}>Домашняя</option>
+                                <option value="Выездная" {% if form_type == 'Выездная' %}selected{% endif %}>Выездная</option>
+                                <option value="Гостевая" {% if form_type == 'Гостевая' %}selected{% endif %}>Гостевая</option>
+                            </select>
                         </div>
-                        {# Add more filters here if needed #}
                         <button type="submit" class="btn btn-primary w-100">Применить фильтры</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-9">
+        <div class="col-md-10">
             {# Products Column #}
             <div class="row justify-content-center">
                 {% for product in products %}
                 <div class="col-md-4 mb-4">
                     <div class="card bg-dark text-white border-secondary">
-                        <img src="{{ url_for('static', filename='images/' + product.image_file) }}" class="card-img-top" alt="{{ product.name }}">
+                        <img src="/static/images/{{ product.image_file }}" class="card-img-top" alt="{{ product.name }}">
                         <div class="card-body">
                             <h5 class="card-title">{{ product.name }}</h5>
                             <p class="card-text">{{ product.description }}</p>
@@ -60,6 +70,23 @@
                 </div>
                 {% endfor %}
             </div>
+
+            <hr class="text-white">
+
+            <div class="row mt-4 text-white">
+                <div class="col-md-6">
+                    <div class="card bg-dark border-secondary p-4">
+                        <h3>Новые поступления</h3>
+                        <p>Следите за обновлениями! Скоро здесь появятся новые формы ваших любимых команд.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-dark border-secondary p-4">
+                        <h3>Специальные предложения</h3>
+                        <p>Не пропустите наши акции и скидки на популярные товары. Подпишитесь на нашу рассылку!</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </div>
 {% endblock %}

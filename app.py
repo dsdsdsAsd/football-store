@@ -39,20 +39,27 @@ def home():
     # Filtering logic
     search_query = request.args.get('search', '').strip()
     selected_brand = request.args.get('brand', '').strip()
-    min_price = request.args.get('min_price', type=float)
-    max_price = request.args.get('max_price', type=float)
-    
+    sort_by = request.args.get('sort_by', '').strip()
+    form_type = request.args.get('form_type', '').strip()
+
     if search_query:
         products_query = products_query.filter(Product.name.ilike(f'%{search_query}%'))
     
     if selected_brand:
         products_query = products_query.filter_by(brand=selected_brand)
 
-    if min_price is not None:
-        products_query = products_query.filter(Product.price >= min_price)
+    if form_type:
+        products_query = products_query.filter(Product.description.ilike(f'%{form_type}%'))
 
-    if max_price is not None:
-        products_query = products_query.filter(Product.price <= max_price)
+    # Sorting logic
+    if sort_by == 'price_asc':
+        products_query = products_query.order_by(Product.price.asc())
+    elif sort_by == 'price_desc':
+        products_query = products_query.order_by(Product.price.desc())
+    elif sort_by == 'name_asc':
+        products_query = products_query.order_by(Product.name.asc())
+    elif sort_by == 'name_desc':
+        products_query = products_query.order_by(Product.name.desc())
 
     products = products_query.all()
 
@@ -60,7 +67,7 @@ def home():
 
     return render_template('home.html', products=products, search_query=search_query, 
                            selected_brand=selected_brand, all_brands=all_brands,
-                           min_price=min_price, max_price=max_price)
+                           sort_by=sort_by, form_type=form_type)
 
 @app.route("/product/<int:product_id>")
 def product(product_id):
