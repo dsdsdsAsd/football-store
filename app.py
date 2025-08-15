@@ -33,7 +33,6 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable=True)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     brand = db.Column(db.String(50), nullable=True)
-    category = db.Column(db.String(50), nullable=True)
 
     def __repr__(self):
         return f"Product('{self.name}', '{self.price}')"
@@ -42,7 +41,6 @@ class Product(db.Model):
 @app.route("/home")
 def home():
     page = request.args.get('page', 1, type=int)
-    per_page = 9
     products_query = Product.query
 
     # Filtering logic
@@ -50,7 +48,6 @@ def home():
     selected_brand = request.args.get('brand', '').strip()
     sort_by = request.args.get('sort_by', '').strip()
     form_type = request.args.get('form_type', '').strip()
-    selected_category = request.args.get('category', '').strip()
 
     if search_query:
         products_query = products_query.filter(Product.name.ilike(f'%{search_query}%'))
@@ -60,9 +57,6 @@ def home():
 
     if form_type:
         products_query = products_query.filter(Product.description.ilike(f'%{form_type}%'))
-
-    if selected_category:
-        products_query = products_query.filter_by(category=selected_category)
 
     # Sorting logic
     if sort_by == 'price_asc':
@@ -74,17 +68,13 @@ def home():
     elif sort_by == 'name_desc':
         products_query = products_query.order_by(Product.name.desc())
 
-    total_products = products_query.count()
-    products = products_query.limit(per_page).offset((page - 1) * per_page).all()
-
-    total_pages = math.ceil(total_products / per_page)
+    products = products_query.paginate(page=page, per_page=9)
 
     all_brands = sorted(list(set(p.brand for p in Product.query.all() if p.brand)))
 
     return render_template('home.html', products=products, search_query=search_query, 
                            selected_brand=selected_brand, all_brands=all_brands,
-                           sort_by=sort_by, form_type=form_type, selected_category=selected_category,
-                           page=page, total_pages=total_pages)
+                           sort_by=sort_by, form_type=form_type)
 
 @app.route("/product/<int:product_id>")
 def product(product_id):
@@ -242,24 +232,24 @@ def init_db():
         db.create_all()
         if not Product.query.first():
             products = [
-                Product(name='Футбольная форма Реал Мадрид', price=79.99, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas', category='Футбольная форма'),
-                Product(name='Футбольная форма Барселона', price=75.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike', category='Футбольная форма'),
-                Product(name='Футбольная форма Манчестер Юнайтед', price=82.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas', category='Футбольная форма'),
-                Product(name='Футбольная форма Бавария Мюнхен', price=78.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas', category='Футбольная форма'),
-                Product(name='Футбольная форма ПСЖ', price=76.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike', category='Футбольная форма'),
-                Product(name='Футбольная форма ПСЖ (гостевая)', price=79.00, description='Гостевая форма сезона 2024/25', image_file='psg.jpg', brand='Nike', category='Футбольная форма'),
-                Product(name='Футбольная форма Ливерпуль', price=81.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Nike', category='Футбольная форма'),
-                Product(name='Футбольная форма Челси', price=80.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Nike', category='Футбольная форма'),
-                Product(name='Футбольная форма Арсенал', price=77.50, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Adidas', category='Футбольная форма'),
-                Product(name='Футбольная форма Манчестер Сити', price=85.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Puma', category='Футбольная форма'),
-                Product(name='Футбольная форма Ювентус', price=79.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas', category='Футбольная форма'),
-                Product(name='Футбольная форма Милан', price=78.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Puma', category='Футбольная форма'),
-                Product(name='Футбольная форма Интер', price=78.50, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike', category='Футбольная форма'),
-                Product(name='Футбольная форма Боруссия Дортмунд', price=74.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Puma', category='Футбольная форма'),
-                Product(name='Футбольная форма Атлетико Мадрид', price=76.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Nike', category='Футбольная форма'),
-                Product(name='Футбольная форма Тоттенхэм', price=77.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike', category='Футбольная форма'),
-                Product(name='Футбольная форма Аякс', price=72.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas', category='Футбольная форма'),
-                Product(name='Футбольная форма Бенфика', price=71.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas', category='Футбольная форма')
+                Product(name='Футбольная форма Реал Мадрид', price=79.99, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма Барселона', price=75.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Манчестер Юнайтед', price=82.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма Бавария Мюнхен', price=78.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма ПСЖ', price=76.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма ПСЖ (гостевая)', price=79.00, description='Гостевая форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Ливерпуль', price=81.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Челси', price=80.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Арсенал', price=77.50, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма Манчестер Сити', price=85.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Puma'),
+                Product(name='Футбольная форма Ювентус', price=79.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма Милан', price=78.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Puma'),
+                Product(name='Футбольная форма Интер', price=78.50, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Боруссия Дортмунд', price=74.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Puma'),
+                Product(name='Футбольная форма Атлетико Мадрид', price=76.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Тоттенхэм', price=77.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Аякс', price=72.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма Бенфика', price=71.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas')
             ]
             db.session.add_all(products)
             db.session.commit()

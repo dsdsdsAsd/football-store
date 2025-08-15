@@ -59,20 +59,7 @@
         <div class="col-md-3">
             <div class="card bg-dark text-white border-secondary mb-4">
                 <div class="card-header">
-                    Фильтр по категориям
-                </div>
-                <div class="list-group list-group-flush">
-                    <a href="{{ url_for('home') }}" class="list-group-item list-group-item-action bg-dark text-white {% if not selected_category %}active{% endif %}">Все категории</a>
-                    <a href="{{ url_for('home', category='Футбольная форма') }}" class="list-group-item list-group-item-action bg-dark text-white {% if selected_category == 'Футбольная форма' %}active{% endif %}">Футбольная форма</a>
-                    <a href="{{ url_for('home', category='Бутсы') }}" class="list-group-item list-group-item-action bg-dark text-white {% if selected_category == 'Бутсы' %}active{% endif %}">Бутсы</a>
-                    <a href="{{ url_for('home', category='Мячи') }}" class="list-group-item list-group-item-action bg-dark text-white {% if selected_category == 'Мячи' %}active{% endif %}">Мячи</a>
-                    <a href="{{ url_for('home', category='Аксессуары') }}" class="list-group-item list-group-item-action bg-dark text-white {% if selected_category == 'Аксессуары' %}active{% endif %}">Аксессуары</a>
-                </div>
-            </div>
-
-            <div class="card bg-dark text-white border-secondary mb-4">
-                <div class="card-header">
-                    Прочие фильтры
+                    Фильтры
                 </div>
                 <div class="card-body">
                     <form method="GET" action="/">
@@ -136,18 +123,22 @@
             <div class="d-flex justify-content-center mt-4">
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
-                        <li class="page-item {% if page <= 1 %}disabled{% endif %}">
-                            <a class="page-link" href="{{ url_for('home', page=page-1) }}" aria-label="Previous">
+                        <li class="page-item {% if not products.has_prev %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('home', page=products.prev_num) }}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        {% for page_num in range(1, total_pages + 1) %}
-                            <li class="page-item {% if page == page_num %}active{% endif %}">
-                                <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
-                            </li>
+                        {% for page_num in products.iter_pages() %}
+                            {% if page_num %}
+                                <li class="page-item {% if products.page == page_num %}active{% endif %}">
+                                    <a class="page-link" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
                         {% endfor %}
-                        <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
-                            <a class="page-link" href="{{ url_for('home', page=page+1) }}" aria-label="Next">
+                        <li class="page-item {% if not products.has_next %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('home', page=products.next_num) }}" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
