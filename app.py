@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, FloatField
 from wtforms.validators import DataRequired, Length, NumberRange
+from flask_wtf.file import FileField, FileAllowed
+from werkzeug.utils import secure_filename
+import os
 import csv
 import io
 import click
@@ -10,13 +13,14 @@ import click
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here' # Change this to a strong, random key in production
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['UPLOAD_FOLDER'] = 'static/images'
 db = SQLAlchemy(app)
 
 class ProductForm(FlaskForm):
     name = StringField('Название', validators=[DataRequired(), Length(min=2, max=100)])
     price = FloatField('Цена', validators=[DataRequired(), NumberRange(min=0)])
     description = TextAreaField('Описание', validators=[Length(max=1024)])
-    image_file = StringField('Файл изображения (например, image.jpg)', validators=[DataRequired(), Length(max=20)])
+    image_file = FileField('Изображение товара', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Разрешены только изображения!')])
     brand = StringField('Бренд', validators=[Length(max=50)])
     submit = SubmitField('Добавить товар')
 
@@ -132,6 +136,14 @@ def admin_dashboard():
     products = Product.query.all()
     return render_template('admin_dashboard.html', products=products)
 
+def save_picture(form_picture):
+    random_hex = os.urandom(8).hex()
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], picture_fn)
+    form_picture.save(picture_path)
+    return picture_fn
+
 @app.route("/admin/add_product", methods=['GET', 'POST'])
 def add_product():
     if not session.get('logged_in'):
@@ -139,10 +151,16 @@ def add_product():
         return redirect(url_for('admin_login'))
     form = ProductForm()
     if form.validate_on_submit():
+        if form.image_file.data:
+            picture_file = save_picture(form.image_file.data)
+            image_file = picture_file
+        else:
+            image_file = 'default.jpg'
+
         product = Product(name=form.name.data,
                           price=form.price.data,
                           description=form.description.data,
-                          image_file=form.image_file.data,
+                          image_file=image_file,
                           brand=form.brand.data)
         db.session.add(product)
         db.session.commit()

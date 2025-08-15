@@ -1,79 +1,46 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="container mt-4">
-        <h2>{{ title }}</h2>
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <div class="form-group">
-                    {{ form.name.label(class="form-control-label") }}
-                    {% if form.name.errors %}
-                        {{ form.name(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.name.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
+    <div class="container mt-4 text-white">
+        <h2 class="mb-4">{{ title }}</h2>
+        <div class="card bg-dark border-secondary">
+            <div class="card-body">
+                <form method="POST" action="" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-control-label") }}
+                            {{ form.name(class="form-control bg-secondary text-white border-secondary") }}
                         </div>
-                    {% else %}
-                        {{ form.name(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.price.label(class="form-control-label") }}
-                    {% if form.price.errors %}
-                        {{ form.price(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.price.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
+                        <div class="mb-3">
+                            {{ form.price.label(class="form-control-label") }}
+                            {{ form.price(class="form-control bg-secondary text-white border-secondary") }}
                         </div>
-                    {% else %}
-                        {{ form.price(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.description.label(class="form-control-label") }}
-                    {% if form.description.errors %}
-                        {{ form.description(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.description.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-control-label") }}
+                            {{ form.description(class="form-control bg-secondary text-white border-secondary", rows=5) }}
                         </div>
-                    {% else %}
-                        {{ form.description(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.image_file.label(class="form-control-label") }}
-                    {% if form.image_file.errors %}
-                        {{ form.image_file(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.image_file.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
+                        <div class="mb-3">
+                            {{ form.brand.label(class="form-control-label") }}
+                            {{ form.brand(class="form-control bg-secondary text-white border-secondary") }}
                         </div>
-                    {% else %}
-                        {{ form.image_file(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.brand.label(class="form-control-label") }}
-                    {% if form.brand.errors %}
-                        {{ form.brand(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.brand.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
+                        <div class="mb-3">
+                            {{ form.image_file.label(class="form-label") }}
+                            {{ form.image_file(class="form-control bg-secondary text-white border-secondary") }}
+                            <small class="form-text text-light">Рекомендуется соотношение сторон 1:1 (квадрат).</small>
+                            {% if form.image_file.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.image_file.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
-                    {% else %}
-                        {{ form.brand(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-            </fieldset>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
+                    </fieldset>
+                    <div class="form-group mt-4">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 {% endblock content %}
