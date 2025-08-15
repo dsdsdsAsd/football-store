@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Каталог футбольных форм{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4 text-white">Каталог футбольных форм</h1>
+
+    <div class="row">
+        <div class="col-md-3">
+            {# Filters Column #}
+            <div class="card bg-dark text-white border-secondary mb-4">
+                <div class="card-header">
+                    Фильтры
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('home') }}">
+                        <div class="mb-3">
+                            <label for="search" class="form-label">Поиск по названию</label>
+                            <input type="text" class="form-control bg-secondary text-white border-secondary" id="search" name="search" value="{{ search_query if search_query is not none else '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="brand" class="form-label">Бренд</label>
+                            <select class="form-select bg-secondary text-white border-secondary" id="brand" name="brand">
+                                <option value="">Все бренды</option>
+                                {% for brand in all_brands %}
+                                    <option value="{{ brand }}" {% if selected_brand == brand %}selected{% endif %}>{{ brand }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {# Add more filters here if needed #}
+                        <button type="submit" class="btn btn-primary w-100">Применить фильтры</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            {# Products Column #}
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-dark text-white border-secondary">
+                        <img src="{{ url_for('static', filename='images/' + product.image_file) }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description }}</p>
+                            <p class="card-text"><strong>Цена: ${{ "%.2f" | format(product.price) }}</strong></p>
+                            <a href="{{ url_for('product', product_id=product.id) }}" class="btn btn-primary">Подробнее</a>
+                            <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-success">В корзину</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

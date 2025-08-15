@@ -1,0 +1,15 @@
+# Virtual environment
+venv/
+__pycache__/
+
+# Database
+instance/site.db
+
+# IDE / Editor specific
+.vscode/
+.idea/
+
+# Python specific
+*.pyc
+*.pyo
+*.pyd

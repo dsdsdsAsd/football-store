@@ -1,0 +1,25 @@
+body {
+    padding-top: 56px; /* Adjust for fixed navbar */
+    background-color: #343a40; /* Dark background */
+    color: #f8f9fa; /* Light text color */
+}
+
+.card-img-top {
+    width: 100%;
+    height: 400px; /* Increased height for product images */
+    object-fit: cover; /* Cover the area without distorting aspect ratio */
+}
+
+.card {
+    height: 100%; /* Ensure cards in a row have same height */
+    display: flex;
+    flex-direction: column;
+}
+
+.card-body {
+    flex-grow: 1; /* Allow card body to grow and fill space */
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
