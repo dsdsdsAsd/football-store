@@ -38,6 +38,7 @@ class Product(db.Model):
 @app.route("/")
 @app.route("/home")
 def home():
+    page = request.args.get('page', 1, type=int)
     products_query = Product.query
 
     # Filtering logic
@@ -65,7 +66,7 @@ def home():
     elif sort_by == 'name_desc':
         products_query = products_query.order_by(Product.name.desc())
 
-    products = products_query.all()
+    products = products_query.paginate(page=page, per_page=9)
 
     all_brands = sorted(list(set(p.brand for p in Product.query.all() if p.brand)))
 
@@ -228,13 +229,27 @@ def init_db():
     with app.app_context():
         db.create_all()
         if not Product.query.first():
-            product1 = Product(name='Футбольная форма Реал Мадрид', price=79.99, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas')
-            product2 = Product(name='Футбольная форма Барселона', price=75.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike')
-            product3 = Product(name='Футбольная форма Манчестер Юнайтед', price=82.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas')
-            product4 = Product(name='Футбольная форма Бавария Мюнхен', price=78.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas')
-            product5 = Product(name='Футбольная форма ПСЖ', price=76.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike')
-            product6 = Product(name='Футбольная форма ПСЖ (гостевая)', price=79.00, description='Гостевая форма сезона 2024/25', image_file='psg.jpg', brand='Nike')
-            db.session.add_all([product1, product2, product3, product4, product5, product6])
+            products = [
+                Product(name='Футбольная форма Реал Мадрид', price=79.99, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма Барселона', price=75.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Манчестер Юнайтед', price=82.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма Бавария Мюнхен', price=78.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма ПСЖ', price=76.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма ПСЖ (гостевая)', price=79.00, description='Гостевая форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Ливерпуль', price=81.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Челси', price=80.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Арсенал', price=77.50, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма Манчестер Сити', price=85.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Puma'),
+                Product(name='Футбольная форма Ювентус', price=79.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма Милан', price=78.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Puma'),
+                Product(name='Футбольная форма Интер', price=78.50, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Боруссия Дортмунд', price=74.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Puma'),
+                Product(name='Футбольная форма Атлетико Мадрид', price=76.50, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Тоттенхэм', price=77.00, description='Выездная форма сезона 2024/25', image_file='psg.jpg', brand='Nike'),
+                Product(name='Футбольная форма Аякс', price=72.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas'),
+                Product(name='Футбольная форма Бенфика', price=71.00, description='Домашняя форма сезона 2024/25', image_file='psg.jpg', brand='Adidas')
+            ]
+            db.session.add_all(products)
             db.session.commit()
         click.echo('Initialized the database.')
 
