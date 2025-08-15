@@ -10,6 +10,8 @@ import csv
 import io
 import click
 
+import math
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here' # Change this to a strong, random key in production
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
@@ -40,6 +42,7 @@ class Product(db.Model):
 @app.route("/home")
 def home():
     page = request.args.get('page', 1, type=int)
+    per_page = 9
     products_query = Product.query
 
     # Filtering logic
@@ -71,13 +74,17 @@ def home():
     elif sort_by == 'name_desc':
         products_query = products_query.order_by(Product.name.desc())
 
-    products = products_query.paginate(page=page, per_page=9)
+    total_products = products_query.count()
+    products = products_query.limit(per_page).offset((page - 1) * per_page).all()
+
+    total_pages = math.ceil(total_products / per_page)
 
     all_brands = sorted(list(set(p.brand for p in Product.query.all() if p.brand)))
 
     return render_template('home.html', products=products, search_query=search_query, 
                            selected_brand=selected_brand, all_brands=all_brands,
-                           sort_by=sort_by, form_type=form_type, selected_category=selected_category)
+                           sort_by=sort_by, form_type=form_type, selected_category=selected_category,
+                           page=page, total_pages=total_pages)
 
 @app.route("/product/<int:product_id>")
 def product(product_id):
