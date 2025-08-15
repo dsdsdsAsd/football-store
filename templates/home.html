@@ -83,7 +83,7 @@
             <h2 class="mb-4 mt-4 text-white">Рекомендуемые товары</h2>
             <div class="row">
                 {# In a real application, you would have a separate query for featured products #}
-                {% for product in products.slice(0, 3) %}
+                {% for product in products[:3] %}
                 <div class="col-md-4 mb-4">
                     <div class="card bg-dark text-white border-secondary">
                         <img src="/static/images/{{ product.image_file }}" class="card-img-top" alt="{{ product.name }}">
