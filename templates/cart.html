@@ -24,17 +24,17 @@
                     <td>{{ item.quantity }}</td>
                     <td>${{ "%.2f" | format(item.price * item.quantity) }}</td>
                     <td>
-                        <a href="{{ url_for('remove_from_cart', product_id=item.id) }}" class="btn btn-danger btn-sm">Удалить</a>
+                        <a href="/remove_from_cart/{{ item.id }}" class="btn btn-danger btn-sm">Удалить</a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         <h3 class="mt-4 text-white">Итого: ${{ "%.2f" | format(total_price) }}</h3>
-        <a href="{{ url_for('clear_cart') }}" class="btn btn-warning mt-3">Очистить корзину</a>
+        <a href="/clear_cart" class="btn btn-warning mt-3">Очистить корзину</a>
         <a href="#" class="btn btn-success mt-3 ms-2">Оформить заказ</a>
     {% else %}
         <p class="text-white">Ваша корзина пуста.</p>
-        <a href="{{ url_for('home') }}" class="btn btn-primary">Начать покупки</a>
+        <a href="/" class="btn btn-primary">Начать покупки</a>
     {% endif %}
 {% endblock %}

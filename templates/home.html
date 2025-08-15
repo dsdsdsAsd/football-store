@@ -13,7 +13,7 @@
                     Фильтры
                 </div>
                 <div class="card-body">
-                    <form method="GET" action="{{ url_for('home') }}">
+                    <form method="GET" action="/">
                         <div class="mb-3">
                             <label for="search" class="form-label">Поиск по названию</label>
                             <input type="text" class="form-control bg-secondary text-white border-secondary" id="search" name="search" value="{{ search_query if search_query is not none else '' }}">
@@ -27,6 +27,14 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label for="min_price" class="form-label">Мин. цена</label>
+                            <input type="number" class="form-control bg-secondary text-white border-secondary" id="min_price" name="min_price" value="{{ min_price if min_price is not none else '' }}" step="0.01">
+                        </div>
+                        <div class="mb-3">
+                            <label for="max_price" class="form-label">Макс. цена</label>
+                            <input type="number" class="form-control bg-secondary text-white border-secondary" id="max_price" name="max_price" value="{{ max_price if max_price is not none else '' }}" step="0.01">
+                        </div>
                         {# Add more filters here if needed #}
                         <button type="submit" class="btn btn-primary w-100">Применить фильтры</button>
                     </form>
@@ -36,7 +44,7 @@
 
         <div class="col-md-9">
             {# Products Column #}
-            <div class="row">
+            <div class="row justify-content-center">
                 {% for product in products %}
                 <div class="col-md-4 mb-4">
                     <div class="card bg-dark text-white border-secondary">
@@ -45,8 +53,8 @@
                             <h5 class="card-title">{{ product.name }}</h5>
                             <p class="card-text">{{ product.description }}</p>
                             <p class="card-text"><strong>Цена: ${{ "%.2f" | format(product.price) }}</strong></p>
-                            <a href="{{ url_for('product', product_id=product.id) }}" class="btn btn-primary">Подробнее</a>
-                            <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-success">В корзину</a>
+                            <a href="/product/{{ product.id }}" class="btn btn-primary">Подробнее</a>
+                            <a href="/add_to_cart/{{ product.id }}" class="btn btn-success">В корзину</a>
                         </div>
                     </div>
                 </div>

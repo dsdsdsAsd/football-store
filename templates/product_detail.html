@@ -11,7 +11,7 @@
             <h1 class="display-4">{{ product.name }}</h1>
             <p class="lead">{{ product.description }}</p>
             <h2 class="text-primary mb-4">Цена: ${{ "%.2f" | format(product.price) }}</h2>
-            <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-success btn-lg me-2">Добавить в корзину</a>
+            <a href="/add_to_cart/{{ product.id }}" class="btn btn-success btn-lg me-2">Добавить в корзину</a>
             <a href="/" class="btn btn-secondary btn-lg">Вернуться в каталог</a>
         </div>
     </div>
